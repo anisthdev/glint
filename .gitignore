@@ -1,0 +1,24 @@
+# Rust build output
+/target/
+**/target/
+
+# Cargo lock (optional - uncomment if this is a binary, not a library)
+# Cargo.lock
+
+# IDE & editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# AI assistant cache
+.codex
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.log
