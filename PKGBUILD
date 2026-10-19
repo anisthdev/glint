@@ -10,7 +10,7 @@ depends=('gcc-libs' 'glibc')
 optdepends=('sysaud: play glint on system events such as charger connect')
 makedepends=('cargo')
 source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+sha256sums=('12a99a8ff8c8b4400a2dcf447ef43bfe3c367beebb71cd0a575df75302450988')
 
 prepare() {
     cd "$pkgname-$pkgver"

@@ -44,10 +44,10 @@ Event mapping belongs in the caller. For example, sysaud can run `glint --origin
 
 ## Install
 
-Arch Linux, from a checkout of this repository:
+Arch Linux, building in a separate directory (makepkg uses `./src` as its work directory, which would collide with this repository's sources):
 
 ```sh
-makepkg -si
+mkdir -p /tmp/glint-pkg && cp PKGBUILD /tmp/glint-pkg/ && cd /tmp/glint-pkg && makepkg -si
 ```
 
 Or with Cargo (Rust 1.85+):
