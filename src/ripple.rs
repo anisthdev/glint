@@ -9,7 +9,7 @@
 //! - fully transparent blocks are skipped and only previously drawn ones are cleared,
 //! - rows are split across threads.
 
-use crate::SparkleColor;
+use crate::Color;
 use std::f32::consts::{PI, SQRT_2};
 use std::thread;
 
@@ -65,13 +65,13 @@ impl Rect {
 #[derive(Debug, Clone)]
 pub struct ChargeRipple {
     noise: Vec<u8>,
-    color: SparkleColor,
+    color: Color,
     /// Center as a fraction of the screen size, (0, 0) being top left.
     origin: (f32, f32),
 }
 
 impl ChargeRipple {
-    pub fn new(color: SparkleColor, origin: (f32, f32)) -> Self {
+    pub fn new(color: Color, origin: (f32, f32)) -> Self {
         Self {
             noise: build_noise_tile(),
             color,
@@ -469,7 +469,7 @@ mod tests {
 
     #[test]
     fn renders_and_clears() {
-        let color = SparkleColor {
+        let color = Color {
             r: 255,
             g: 255,
             b: 255,
