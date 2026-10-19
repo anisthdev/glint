@@ -37,7 +37,8 @@ struct Args {
     #[arg(long, default_value_t = DEFAULT_DURATION_MS)]
     duration_ms: u64,
 
-    #[arg(long, default_value_t = true)]
+    /// Draw on every monitor, or only the first one with `false`
+    #[arg(long, default_value_t = true, action = clap::ArgAction::Set, num_args = 0..=1, default_missing_value = "true")]
     all_monitors: bool,
 
     #[arg(long, default_value = DEFAULT_PRIMARY_COLOR, value_parser = parse_color_arg)]
@@ -384,7 +385,8 @@ impl App {
             surface.set_buffer_scale(1);
             surface.commit();
 
-            self.screens.push(Screen::new(output, surface, layer_surface));
+            self.screens
+                .push(Screen::new(output, surface, layer_surface));
             pending.spawned = true;
 
             if !self.args.all_monitors {

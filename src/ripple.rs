@@ -192,8 +192,8 @@ impl<'a> Frame<'a> {
             let sd_inner = (d - radius) / radius;
             let sparkle_ring = soften(sd_outer.max(-sd_inner), blur);
             let inside = soften(sd_outer, blur);
-            let alpha = ((1.0 - inside) * fade_fill).max((1.0 - sparkle_ring) * fade_ring)
-                * color_alpha;
+            let alpha =
+                ((1.0 - inside) * fade_fill).max((1.0 - sparkle_ring) * fade_ring) * color_alpha;
             let mask = (1.0 - sparkle_ring) * fade_sparkle;
             if alpha > VISIBLE_EPS || mask > VISIBLE_EPS {
                 lo = lo.min(idx);
@@ -253,7 +253,10 @@ impl<'a> Frame<'a> {
                     y1: (origin_y + y1) as u32,
                 };
                 let corner = |cx: usize, cy: usize| {
-                    corners.get((by + cy) * cols + bx + cx).copied().unwrap_or(0.0)
+                    corners
+                        .get((by + cy) * cols + bx + cx)
+                        .copied()
+                        .unwrap_or(0.0)
                 };
                 let c = [corner(0, 0), corner(1, 0), corner(0, 1), corner(1, 1)];
 
