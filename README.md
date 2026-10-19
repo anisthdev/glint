@@ -1,6 +1,6 @@
 # glint
 
-Small Hyprland-friendly charger effect without GTK.
+Small Hyprland-friendly event animation overlay without GTK.
 
 ## Design
 
@@ -11,11 +11,25 @@ Small Hyprland-friendly charger effect without GTK.
 
 ## Target behavior
 
-- Spawn on charger plug-in.
+- Spawn when another tool detects an event and launches this binary.
 - Show for about `1.2s` to `1.5s`.
-- Prefer one monitor by default.
 - Exit immediately after the last frame.
-- Use `--primary-color` to override the sparkle tint, e.g. `--primary-color '#7dd3fc'`.
+- Stay animation-only: no charger, battery, DBus, udev, Hyprland, or other event detection lives here.
+- Use `--animation` to choose the visual effect.
+- Use `--primary-color` to override the tint, e.g. `--primary-color '#7dd3fc'`.
+
+## Animations
+
+```sh
+glint --animation sparkle-surge
+glint --animation reactor-ring
+glint --animation arc-bloom
+glint --animation battery-fill
+glint --animation sonic-ripple
+glint --animation screenshot-flash
+```
+
+`sparkle-surge` is the default: a CPU port of Android's wired-charging ripple (see `reference/aosp-charging-ripple/`), a soft glow and sparkle ring expanding from the bottom center over `1.75s`. Other animations default to `1.2s`; `--duration-ms` overrides either. Event mapping belongs in the caller, for example a separate event daemon can run `glint --animation reactor-ring` on charger connect.
 
 ## Runtime model
 
@@ -31,9 +45,9 @@ Small Hyprland-friendly charger effect without GTK.
 - No `python`, `gi`, `gtk4`, or `cairo` startup.
 - No PyGObject import overhead.
 - No full widget tree or GTK scene graph.
-- The only long-lived state is the Wayland connection, one surface, a couple of buffers, and a particle array.
+- The only long-lived state is the Wayland connection, one surface, a couple of buffers, and the selected animation state.
 
 ## Next steps
 
-- Tweak the particle palette and motion if the effect needs to be more or less subtle.
+- Tweak the animation palette and motion if the effects need to be more or less subtle.
 - Adjust the default duration or particle count if the runtime feel is too short or too dense.
