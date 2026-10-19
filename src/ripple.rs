@@ -66,13 +66,16 @@ impl Rect {
 pub struct ChargeRipple {
     noise: Vec<u8>,
     color: SparkleColor,
+    /// Center as a fraction of the screen size, (0, 0) being top left.
+    origin: (f32, f32),
 }
 
 impl ChargeRipple {
-    pub fn new(color: SparkleColor) -> Self {
+    pub fn new(color: SparkleColor, origin: (f32, f32)) -> Self {
         Self {
             noise: build_noise_tile(),
             color,
+            origin,
         }
     }
 
@@ -142,7 +145,12 @@ impl<'a> Frame<'a> {
         let w = width as f32;
         let h = height as f32;
         let progress = standard_ease(raw);
-        let radius = w.max(h) * progress;
+        let cx = w * ripple.origin.0;
+        let cy = h * ripple.origin.1;
+        // Upstream grows to the longest screen side, which suits a port at the bottom
+        // middle of a phone. Reaching the farthest corner generalizes that to any origin.
+        let reach = (cx.max(w - cx)).hypot(cy.max(h - cy));
+        let radius = reach * progress;
         let blur = lerp(1.25, 0.5, progress);
         let fade_sparkle = fade(raw, 0.0, 0.1, 0.4, 1.0);
         let fade_ring = fade(raw, 0.0, 0.1, 0.3, 1.0);
@@ -156,8 +164,8 @@ impl<'a> Frame<'a> {
 
         let mut frame = Self {
             noise: &ripple.noise,
-            cx: w * 0.5,
-            cy: h,
+            cx,
+            cy,
             time_ms,
             distort_radial: DISTORT_STRENGTH * raw * (1.0 - raw),
             distort_xy: DISTORT_STRENGTH * (1.0 - raw),
@@ -461,12 +469,13 @@ mod tests {
 
     #[test]
     fn renders_and_clears() {
-        let ripple = ChargeRipple::new(SparkleColor {
+        let color = SparkleColor {
             r: 255,
             g: 255,
             b: 255,
             a: 255,
-        });
+        };
+        let ripple = ChargeRipple::new(color, (1.0, 1.0));
         let (w, h) = (320u32, 200u32);
         let mut pixels = vec![0u8; (w * h * 4) as usize];
         let drawn = ripple.render(&mut pixels, w, h, 0.3, 500.0, None);

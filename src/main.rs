@@ -53,6 +53,89 @@ struct Args {
 
     #[arg(long, default_value = DEFAULT_PRIMARY_COLOR, value_parser = parse_color_arg)]
     primary_color: SparkleColor,
+
+    /// Where sparkle-surge starts, e.g. the charging port side
+    #[arg(long, default_value_t = Origin::Bottom)]
+    origin: Origin,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum Origin {
+    TopLeft,
+    Top,
+    TopRight,
+    Left,
+    Center,
+    Right,
+    BottomLeft,
+    Bottom,
+    BottomRight,
+}
+
+impl Origin {
+    const ALL: [Self; 9] = [
+        Self::TopLeft,
+        Self::Top,
+        Self::TopRight,
+        Self::Left,
+        Self::Center,
+        Self::Right,
+        Self::BottomLeft,
+        Self::Bottom,
+        Self::BottomRight,
+    ];
+
+    fn name(self) -> &'static str {
+        match self {
+            Self::TopLeft => "top-left",
+            Self::Top => "top",
+            Self::TopRight => "top-right",
+            Self::Left => "left",
+            Self::Center => "center",
+            Self::Right => "right",
+            Self::BottomLeft => "bottom-left",
+            Self::Bottom => "bottom",
+            Self::BottomRight => "bottom-right",
+        }
+    }
+
+    /// Position as a fraction of the screen size, (0, 0) being top left.
+    fn normalized(self) -> (f32, f32) {
+        match self {
+            Self::TopLeft => (0.0, 0.0),
+            Self::Top => (0.5, 0.0),
+            Self::TopRight => (1.0, 0.0),
+            Self::Left => (0.0, 0.5),
+            Self::Center => (0.5, 0.5),
+            Self::Right => (1.0, 0.5),
+            Self::BottomLeft => (0.0, 1.0),
+            Self::Bottom => (0.5, 1.0),
+            Self::BottomRight => (1.0, 1.0),
+        }
+    }
+}
+
+impl std::fmt::Display for Origin {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str(self.name())
+    }
+}
+
+impl FromStr for Origin {
+    type Err = anyhow::Error;
+
+    fn from_str(value: &str) -> Result<Self> {
+        Self::ALL
+            .into_iter()
+            .find(|origin| origin.name() == value)
+            .ok_or_else(|| {
+                let names: Vec<_> = Self::ALL.iter().map(|origin| origin.name()).collect();
+                anyhow!(
+                    "unknown origin '{value}'. Expected one of: {}",
+                    names.join(", ")
+                )
+            })
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -306,6 +389,7 @@ impl AnimationState {
         height: u32,
         particle_count: usize,
         primary_color: SparkleColor,
+        origin: Origin,
     ) -> Self {
         let mut rng = SmallRng::from_entropy();
         let width = width.max(DEFAULT_WIDTH) as f32;
@@ -314,7 +398,7 @@ impl AnimationState {
 
         match kind {
             AnimationKind::SparkleSurge => Self::SparkleSurge {
-                ripple: ChargeRipple::new(primary_color),
+                ripple: ChargeRipple::new(primary_color, origin.normalized()),
             },
             AnimationKind::ReactorRing => {
                 let orbiters = (0..(count / 2).max(72))
@@ -480,6 +564,7 @@ struct Screen {
     animation_kind: AnimationKind,
     particle_count: usize,
     primary_color: SparkleColor,
+    origin: Origin,
 }
 
 impl Screen {
@@ -490,6 +575,7 @@ impl Screen {
         animation_kind: AnimationKind,
         particle_count: usize,
         primary_color: SparkleColor,
+        origin: Origin,
     ) -> Self {
         Self {
             _output: output,
@@ -509,6 +595,7 @@ impl Screen {
             animation_kind,
             particle_count,
             primary_color,
+            origin,
         }
     }
 
@@ -570,6 +657,7 @@ impl Screen {
             self.height,
             self.particle_count,
             self.primary_color,
+            self.origin,
         ));
     }
 
@@ -662,6 +750,7 @@ impl App {
                 self.args.animation,
                 self.args.particle_count,
                 self.args.primary_color,
+                self.args.origin,
             ));
             self.outputs[pending_idx].spawned = true;
             spawned_any = true;

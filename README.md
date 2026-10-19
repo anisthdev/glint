@@ -29,7 +29,7 @@ glint --animation sonic-ripple
 glint --animation screenshot-flash
 ```
 
-`sparkle-surge` is the default: a CPU port of Android's wired-charging ripple (see `reference/aosp-charging-ripple/`), a soft glow and sparkle ring expanding from the bottom center over `1.75s`. Other animations default to `1.2s`; `--duration-ms` overrides either. Event mapping belongs in the caller, for example a separate event daemon can run `glint --animation reactor-ring` on charger connect.
+`sparkle-surge` is the default: a CPU port of Android's wired-charging ripple (see `reference/aosp-charging-ripple/`), a soft glow and sparkle ring expanding from the bottom center over `1.75s`. Other animations default to `1.2s`; `--duration-ms` overrides either. Use `--origin` to start it where the charging port is: `top-left`, `top`, `top-right`, `left`, `center`, `right`, `bottom-left`, `bottom` (default) or `bottom-right`. Event mapping belongs in the caller, for example a separate event daemon can run `glint --animation reactor-ring` on charger connect.
 
 ## Runtime model
 
