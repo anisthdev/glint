@@ -1,0 +1,78 @@
+.TH GLINT 1 "2026-10-19" "glint 0.1.0" "User Commands"
+.SH NAME
+glint \- play a short event animation as a Wayland overlay
+.SH SYNOPSIS
+.B glint
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.B glint
+draws a one-shot, click-through animation on a fullscreen
+.B zwlr_layer_shell_v1
+overlay surface and exits as soon as the last frame is shown.
+It does no event detection itself; another tool, such as
+.BR sysaud (1),
+launches it when something happens.
+.PP
+The compositor must support the wlr layer-shell protocol (Hyprland, Sway,
+river, niri and other wlroots-based compositors).
+The layer surface namespace is
+.BR glint ,
+for compositor layer rules.
+.SH OPTIONS
+.TP
+.BI \-\-animation " NAME"
+Animation to play. Default:
+.BR sparkle\-surge ,
+a port of Android's wired-charging ripple.
+.TP
+.BI \-\-duration\-ms " MS"
+Animation length in milliseconds. Default: 1750.
+.TP
+.BI \-\-primary\-color " COLOR"
+Tint as
+.B #RRGGBB
+or
+.BR #RRGGBBAA .
+Default: #fff0b4.
+.TP
+.BI \-\-origin " POSITION"
+Where the animation starts, for example the side of the charging port:
+.BR top\-left ", " top ", " top\-right ", " left ", " center ", " right ", "
+.BR bottom\-left ", " bottom " or " bottom\-right .
+Default: bottom.
+.TP
+.BR \-\-all\-monitors " [" true | false ]
+Draw on every monitor, or only the first one with
+.BR false .
+Default: true.
+.TP
+.BR \-h ", " \-\-help
+Print help.
+.SH EXAMPLES
+Play the charging ripple from the bottom right corner in a light blue:
+.PP
+.RS
+.nf
+glint \-\-origin bottom\-right \-\-primary\-color '#7dd3fc'
+.fi
+.RE
+.PP
+Run it from
+.BR sysaud (1)
+when a charger is connected, in
+.IR ~/.config/sysaud/config.yaml :
+.PP
+.RS
+.nf
+events:
+  power.ac\-plugged:
+    script: glint \-\-origin bottom\-right
+.fi
+.RE
+.SH EXIT STATUS
+0 after the animation finished, non-zero if Wayland or the layer-shell
+protocol is unavailable.
+.SH SEE ALSO
+.BR sysaud (1)
+.PP
+https://github.com/anisthdev/glint

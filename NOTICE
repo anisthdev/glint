@@ -1,0 +1,12 @@
+glint
+Copyright (c) 2026 asifb
+
+glint is licensed under the MIT License (see LICENSE), except for
+src/ripple.rs and the files in reference/aosp-charging-ripple/.
+
+src/ripple.rs is a Rust port of the wired-charging ripple from the Android
+Open Source Project (frameworks/base/packages/SystemUI, RippleShader.kt,
+RippleView.kt, SdfShaderLibrary.kt, ShaderUtilLibrary.kt), modified to render
+on the CPU into Wayland shared-memory buffers.
+Copyright (C) 2021-2022 The Android Open Source Project
+Licensed under the Apache License, Version 2.0 (see LICENSE-APACHE).

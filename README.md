@@ -41,3 +41,23 @@ Event mapping belongs in the caller. For example, sysaud can run `glint --origin
 4. Allocate a small rotating set of SHM buffers.
 5. Render each frame from Wayland frame callbacks, damaging only the regions that changed.
 6. Exit after the final, fully faded frame is committed.
+
+## Install
+
+Arch Linux, from a checkout of this repository:
+
+```sh
+makepkg -si
+```
+
+Or with Cargo (Rust 1.85+):
+
+```sh
+cargo install --locked --path .
+```
+
+glint needs a Wayland compositor with the wlr layer-shell protocol, such as Hyprland or Sway. See `man glint` for all options.
+
+## License
+
+MIT (see `LICENSE`), except `src/ripple.rs` and `reference/aosp-charging-ripple/`, which are derived from the Android Open Source Project and licensed under Apache 2.0 (see `LICENSE-APACHE` and `NOTICE`).
